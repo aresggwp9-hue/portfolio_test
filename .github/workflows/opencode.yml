@@ -31,4 +31,4 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
         with:
           # Если эта модель выдаст ошибку, измените на: opencode/mimo-v2.5-free
-          model: opencode/deepseek-v4-flash-free
+          model: deepseek-v4-flash-free
