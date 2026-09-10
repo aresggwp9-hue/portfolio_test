@@ -30,5 +30,4 @@ jobs:
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
         with:
-          # Если эта модель выдаст ошибку, измените на: opencode/mimo-v2.5-free
-          model: deepseek-v4-flash-free
+          model: opencode/mimo-v2.5-free
