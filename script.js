@@ -15,47 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const navbar = document.querySelector('.navbar');
-    let lastScroll = 0;
-
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-
-        if (currentScroll > 100) {
-            navbar.style.background = 'rgba(10, 10, 15, 0.95)';
-        } else {
-            navbar.style.background = 'rgba(10, 10, 15, 0.9)';
-        }
-
-        lastScroll = currentScroll;
-    });
-
-    const sections = document.querySelectorAll('section');
-    const navLinksArray = document.querySelectorAll('.nav-links a');
-
-    const observerOptions = {
-        root: null,
-        rootMargin: '-50%',
-        threshold: 0
-    };
+    const sections = document.querySelectorAll('section[id]');
+    const navLinksAll = document.querySelectorAll('.nav-links a');
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
-                navLinksArray.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.add('active');
-                    }
+                navLinksAll.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
                 });
             }
         });
-    }, observerOptions);
-
-    sections.forEach(section => {
-        observer.observe(section);
+    }, {
+        root: null,
+        rootMargin: '-50% 0px -50% 0px',
+        threshold: 0
     });
+
+    sections.forEach(section => observer.observe(section));
 
     const fadeElements = document.querySelectorAll('.skill-card, .project-card, .about-content, .contact-content');
 
@@ -66,10 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fadeObserver.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    }, { threshold: 0.1 });
 
     fadeElements.forEach(el => {
         el.classList.add('fade-in');
@@ -81,29 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const progress = entry.target.getAttribute('data-progress');
-                entry.target.style.width = `${progress}%`;
+                entry.target.style.width = `${entry.target.getAttribute('data-progress')}%`;
                 skillObserver.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.5
-    });
+    }, { threshold: 0.5 });
 
-    skillBars.forEach(bar => {
-        skillObserver.observe(bar);
-    });
+    skillBars.forEach(bar => skillObserver.observe(bar));
 
     const contactForm = document.getElementById('contact-form');
 
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        const formData = new FormData(contactForm);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const subject = formData.get('subject');
-        const message = formData.get('message');
 
         const submitBtn = contactForm.querySelector('.btn-submit');
         const originalText = submitBtn.textContent;
@@ -113,8 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             submitBtn.textContent = 'Message Sent!';
-            submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-
+            submitBtn.style.background = '#059669';
             contactForm.reset();
 
             setTimeout(() => {
@@ -140,40 +103,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
-    });
-
-    const statNumbers = document.querySelectorAll('.stat-number');
-
-    const animateCounter = (element, target) => {
-        let current = 0;
-        const increment = target / 50;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                element.textContent = `${target}+`;
-                clearInterval(timer);
-            } else {
-                element.textContent = `${Math.floor(current)}+`;
-            }
-        }, 30);
-    };
-
-    const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = parseInt(entry.target.textContent);
-                animateCounter(entry.target, target);
-                statObserver.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.5
-    });
-
-    statNumbers.forEach(stat => {
-        const target = parseInt(stat.textContent);
-        stat.textContent = '0+';
-        stat.setAttribute('data-target', target);
-        statObserver.observe(stat);
     });
 });
